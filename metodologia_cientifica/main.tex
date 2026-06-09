@@ -1,75 +1,209 @@
 \documentclass[12pt]{article}
 
 \usepackage{sbc-template}
-
 \usepackage{graphicx,url}
- 
-\usepackage[utf8]{inputenc}  
-     
+\usepackage[utf8]{inputenc}
+
 \sloppy
+\graphicspath{{figures/}}
 
-\title{Avaliação de toxicidade em modelos multimodais de compreensão texto-imagem: um mapeamento sistemático}
+\csname title\endcsname{Avaliação de toxicidade em modelos multimodais de compreensão texto-imagem: um mapeamento sistemático}
 
-\author{Julia Soares Dollis\inst{1} }
+\author{Julia Soares Dollis\inst{1}}
 
 \address{Bacharelado em Ciência da Computação\\
 Instituto Federal de Educação, Ciência e Tecnologia do Ceará (IFCE)\\
-   Ceará -- CE -- Brasil
-  \email{\ guilhermeo629@gmail.com}
-}
+Ceará -- CE -- Brasil\\
+\email{}}
 
-\begin{document} 
+\begin{document}
 
 \maketitle
 
-\section{O Conto do Bonde Desgovernado} 
-
 \begin{abstract}
-  The text follows the style of argumentative dissertation, containing two pages and     four paragraphs that are divided in: Introduction, first case, second case and         conclusion. The text model used was made available in the official domain of SBC       (Sociedade Brasileira de Computação). The purpose of the text is to inform the         author's opinion on two situations cited in Michael J. Sandel's book, "Justice -       What it is to do a certain thing", and explain its reasons.
+Modelos multimodais de compreensão texto-imagem ampliaram a capacidade de interação com conteúdo visual, mas também abriram novas superfícies de risco ligadas a viés, discurso de ódio, conteúdos inseguros e jailbreaks. Este artigo apresenta um mapeamento sistemático sobre como a literatura tem avaliado toxicidade nesses modelos. A busca final foi executada no Scopus em 09/06/2026 e retornou 843 registros; após filtros, deduplicação e triagem, 55 estudos compuseram o corpus núcleo analisado em profundidade. Os resultados mostram duas linhagens dominantes de pesquisa: avaliação de viés/estereótipos e avaliação de jailbreak/conteúdo nocivo. Também observamos forte fragmentação de benchmarks, dependência de juízes automáticos e baixa presença de estudos sobre contextos culturais e linguísticos fora do eixo anglófono. Por fim, o mapeamento consolida seis lacunas de pesquisa e indica direções para avaliações mais padronizadas, multiculturais e sensíveis ao contexto multimodal.
 \end{abstract}
-     
-\begin{resumo} 
-  O texto segue o estilo de dissertação argumentativa, contendo duas páginas e quatro   parágrafos que se dividem em introdução, primeiro caso, segundo caso e                 conclusão. O modelo de texto utilizado foi o disponibilizado no domínio               oficial  da SBC(Sociedade Brasileira de Computação). O objetivo do texto é             informar a  opinião do autor sobre duas situações citadas no livro “Justiça - o que   é fazer a coisa certa” de Michael J. Sandel, e explicar seus motivos.
+
+\begin{resumo}
+Modelos multimodais de compreensão texto-imagem expandiram as possibilidades de uso da IA, mas também ampliaram a superfície de risco para viés, discurso de ódio, conteúdo inseguro e jailbreak. Este artigo apresenta um mapeamento sistemático sobre como a literatura avalia toxicidade nesses modelos. A busca final foi executada no Scopus em 09/06/2026, com 843 registros na string final; após filtros, deduplicação e triagem, 55 estudos compuseram o corpus núcleo analisado em profundidade. Os resultados indicam duas linhagens principais de pesquisa: uma voltada à medição de viés e estereótipos e outra focada em jailbreak e geração de conteúdo nocivo. Também identificamos forte fragmentação de benchmarks, dependência de juízes automáticos e ausência de estudos no contexto brasileiro. Como contribuição, o mapeamento consolida seis lacunas de pesquisa e aponta caminhos para avaliações mais padronizadas, multiculturais e consistentes com a natureza multimodal do problema.
 \end{resumo}
 
+\section{Introdução}
 
-\subsection{Introdução}
+Modelos multimodais de compreensão texto-imagem, como GPT-4V, LLaVA, Gemini e Qwen-VL, passaram a ocupar um lugar central em tarefas que combinam visão e linguagem. Essa evolução ampliou a capacidade de raciocínio sobre imagens, mas também trouxe uma nova superfície de risco: agora, a toxicidade pode emergir não apenas do texto isolado, mas da interação entre modalidades.
 
-O texto a ser tem como objetivo demonstrar a minha opinião para com a história do   bonde desgovernado, na qual ele se encontra em duas situações e em cada uma delas   deve escolher entre duas alternativas, explicando motivos e razões das quais         resultaram suas escolhas.
+Nesse cenário, o conceito de toxicidade multimodal abrange fenômenos como viés e estereótipos, discurso de ódio, conteúdos NSFW, respostas inseguras e jailbreaks que exploram fragilidades de alinhamento. O problema é particularmente relevante porque a composição entre imagem e texto pode produzir efeitos que não aparecem quando cada modalidade é analisada isoladamente. Em outras palavras, a avaliação de segurança multimodal não pode ser reduzida à lógica do texto puro.
 
-\subsection{Primeiro Caso} \label{sec:firstpage}
+A literatura sobre avaliação desse tema cresceu rapidamente, mas de forma dispersa. Parte dos estudos se concentra em viés e fairness, com forte presença de modelos contrastivos e embasamento em métricas de associação; outra parte investiga jailbreaks, conteúdos nocivos e estratégias de red teaming em modelos multimodais mais recentes. O resultado é um campo fragmentado, com benchmarks próprios, protocolos heterogêneos e diferentes definições operacionais do que conta como toxicidade.
 
-Na primeira versão, dentro do contexto inserido pelo livro, ao estar guiando um bonde desgovernado deve se escolher entre atropelar cinco operários em uma linha ou atropelar um único operário em uma linha alternativa. Com base nos ensinamentos a mim repassados se houvesse a possibilidade de não matar ninguém, essa seria a minha escolha. Mas dentre as alternativas descritas acredito que pelo choque da situação eu não teria capacidade de escolher logicamente e ficaria paralisado. Porém assim como o algoritmo de uma Inteligência Artificial, que realiza escolhas de acordo com a proximidade da escolha que seria a “certa”, creio que a minha escolha seria desviar o bonde para a linha que continha apenas um operário, assumindo o risco de matar menos pessoas logo evitando assim uma tragédia maior e que seria a escolha menos errada e, além de haver a possibilidade de o operário escapar.
+Diante disso, este trabalho responde à seguinte questão principal: como a toxicidade em modelos multimodais de compreensão texto-imagem tem sido avaliada na literatura? Para isso, organizamos a análise em cinco questões de pesquisa complementares, cobrindo modelos avaliados, tipos de toxicidade, datasets e benchmarks, protocolos de avaliação e lacunas abertas. A busca final localizou 843 registros, dos quais 55 compõem o corpus núcleo analisado nesta versão.
 
-\subsection{Segundo Caso}
+O artigo está organizado da seguinte forma. A Seção 2 descreve a metodologia da pesquisa. A Seção 3 apresenta os métodos identificados na literatura e sintetiza os principais padrões observados. A Seção 4 discute as conclusões, lacunas e ameaças à validade. Por fim, as referências encerram o texto.
 
-Na segunda versão, o livro insere um contexto no qual você se encontra em uma ponte acima dos trilhos do bonde, e deve escolher entre ver os cinco operários serem atropelados ou empurrar um homem corpulento da ponte sobre os trilhos com o objetivo de parar o bonde afim de salvar os cinco operários. Com base nos ensinamentos a mim repassados, considero essa segunda versão mais complicada, embora ela tenha uma essência parecida com a primeira, a de escolher entre atropelar cinco operários ou apenas um, ela envolve uma terceira pessoa neutra, mesmo com a ideia de empurrar uma pessoa para a morte sendo macabra, creio que ainda assim escolheria ela, pois os cinco operários teriam uma chance maior de escapar do atropelamento.
+\section{Metodologia da pesquisa}
 
-\subsection{Conclusão}
+Esta revisão adota um desenho de mapeamento sistemático, com foco em estudos primários sobre avaliação de toxicidade em modelos multimodais de compreensão texto-imagem. A execução foi conduzida no Scopus, que funciona como base agregadora e oferece boa cobertura de periódicos e conferências de computação e inteligência artificial.
 
-Essa pequena história nos mostra que por mais que tentemos escolher o que é considerado o certo, sempre irão ocorrer situações que nos posicionam fora da nossa zona de conforto, colocando a prova nossos valores morais, nos forçando fazer escolhas que são necessárias e que irão definir nosso futuro, nos mostrando que nem sempre vamos poder escolher fazer o certo, mas ter de escolher fazer o necessário, por mais difícil que seja. Várias situações parecidas são postas a nós todos os dias, porém com diferentes magnitudes, o modo como nos portamos diante dessas decisões é o que nos define.
+\subsection{Questões de pesquisa}
 
-\subsection{Referências}
+A Tabela~\ref{tab:qp} resume a questão principal e as questões derivadas usadas na extração dos dados.
 
-\cite{sandel:2015}.
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{1.1cm}p{6.8cm}p{5.0cm}}
+\hline
+{\bfseries ID} & {\bfseries Questão} & {\bfseries O que classificar} \\
+\hline
+QP0 & Como a toxicidade em modelos multimodais texto-imagem tem sido avaliada na literatura? & Visão geral do problema e dos padrões de avaliação \\
+QP1 & Quais modelos multimodais de compreensão texto-imagem são avaliados? & VLM, LVLM, MLLM, VLLM, modelos proprietários e open-source \\
+QP2 & Quais tipos de toxicidade são considerados? & Viés, estereótipos, NSFW, violência, odiosidade, memes, jailbreak \\
+QP3 & Quais datasets e benchmarks são utilizados? & Nome, idioma e tipo de dado \\
+QP4 & Quais métricas e protocolos de avaliação são adotados? & ASR, F1, Acc, avaliação humana, LLM-as-a-judge, métricas de viés \\
+QP5 & Quais lacunas permanecem abertas? & Padronização, contexto cultural, interseccionalidade e português \\
+\hline
+\end{tabular}
+\caption{Questões de pesquisa usadas na extração dos dados.}
+\label{tab:qp}
+\end{table}
+
+\subsection{Estratégia de busca}
+
+A string final foi validada a partir de uma versão inicial que retornou 835 documentos, mas deixou de recuperar um dos cinco artigos de controle. Após a inclusão do sinônimo \textit{vision LLM}, a versão final passou a recuperar 843 documentos, cobrindo os estudos de controle e reduzindo o risco de perda de trabalhos relevantes.
+
+\small
+\begin{verbatim}
+TITLE-ABS-KEY(
+("vision-language model*" OR "vision language model*" OR "multimodal large language model*"
+ OR "large vision-language model*" OR LVLM OR MLLM OR VLM OR "vision LLM"
+ OR "vision large language model*")
+AND (toxic* OR harmful OR unsafe OR hate OR NSFW OR harm OR safety OR stereotyp*)
+AND (evaluat* OR benchmark OR dataset OR assess* OR measur* OR detect* OR jailbreak
+ OR "red team*" OR audit)
+)
+\end{verbatim}
+\normalsize
+
+Foram aplicados filtros para o período de 2021 a 2026, tipo de documento \textit{article} e \textit{conference paper}, e idioma inglês. Google e Google Scholar não foram usados como motores de busca, pois seus resultados não são reprodutíveis em sentido estrito.
+
+\subsection{Critérios de inclusão e exclusão}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{1.0cm}p{6.9cm}p{1.0cm}p{5.0cm}}
+\hline
+{\bfseries Tipo} & {\bfseries Critério} & {\bfseries ID} & {\bfseries Descrição} \\
+\hline
+In. & Trata de toxicidade, conteúdo nocivo, viés, estereótipos, NSFW ou respostas inseguras em modelos multimodais & CI1 & Escopo principal \\
+In. & É estudo primário & CI2 & Propõe, avalia ou analisa empiricamente \\
+In. & Publicado entre 2021 e 2026 & CI3 & Recorte temporal \\
+In. & Texto completo acessível & CI4 & Reprodutibilidade mínima \\
+In. & Escrito em inglês ou português & CI5 & Idioma aceito \\
+\hline
+Exc. & Trata apenas de LLM de texto & CE1 & Sem componente visual \\
+Exc. & Trata apenas de geração texto\(\rightarrow\)imagem & CE2 & Fora do escopo \\
+Exc. & Segurança sem relação com toxicidade & CE3 & Privacidade, alucinação, robustez geral etc. \\
+Exc. & É revisão ou survey & CE4 & Não entra no corpus \\
+Exc. & É duplicado ou versão antiga & CE5 & Mantém-se a versão mais recente \\
+Exc. & Resumo, pôster ou texto inacessível & CE6 & Material insuficiente \\
+\hline
+\end{tabular}
+\caption{Critérios de inclusão e exclusão usados na triagem.}
+\label{tab:criterios}
+\end{table}
+
+\subsection{Questões de qualidade}
+
+Cada questão de qualidade recebeu pontuação 1, 0,5 ou 0, com corte sugerido em 2,5 pontos.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{1.2cm}p{12.5cm}}
+\hline
+{\bfseries ID} & {\bfseries Questão} \\
+\hline
+QQ1 & Os objetivos do estudo estão claramente definidos? \\
+QQ2 & O método de avaliação está descrito de forma reproduzível? \\
+QQ3 & Há avaliação empírica com modelos e datasets identificados? \\
+QQ4 & O estudo apresenta comparação, análise sistemática ou justificativa clara? \\
+QQ5 & O estudo discute limitações ou ameaças à validade? \\
+\hline
+\end{tabular}
+\caption{Questões de qualidade aplicadas aos estudos selecionados.}
+\label{tab:qualidade}
+\end{table}
+
+\subsection{Execução da revisão}
+
+A execução ocorreu em etapas. A busca final retornou 843 registros; após os filtros por ano, tipo de documento e idioma, restaram 781. Em seguida, a remoção de duplicatas reduziu o conjunto para 749 estudos. Na triagem de título e resumo, 222 foram marcados para inclusão e 39 ficaram em dúvida. A segunda leitura reduziu o conjunto para 170 estudos, divididos em 55 do corpus núcleo e 115 do corpus periférico. Esta versão do artigo aprofunda os 55 estudos do núcleo, que concentram a evidência mais diretamente relacionada à avaliação de toxicidade.
+
+\subsection{Ameaças à validade}
+
+As principais ameaças à validade estão ligadas ao uso de uma única base na execução final, à extração em nível de resumo, à categorização normalizada por critérios próprios e ao fato de a questão de qualidade QQ5 depender de informações nem sempre disponíveis nos resumos. Também há um recorte temporal imposto pelo cronograma do trabalho.
+
+\section{Métodos identificados}
+
+\subsection{Evolução temporal e linhagens de pesquisa}
+
+O campo é recente e cresce rapidamente. No corpus núcleo, não há estudos em 2021; a literatura começa em 2022, avança em 2023 e 2024, e se concentra de forma intensa em 2025 e 2026, que juntos somam 40 dos 55 estudos. Essa aceleração mostra que a segurança multimodal deixou de ser um tema lateral e passou a acompanhar a popularização dos MLLMs.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{fig5_toxic_ano.png}
+\caption{Evolução dos tipos de toxicidade por ano (QP2 × ano).}
+\label{fig:toxic_ano}
+\end{figure}
+
+A Figura~\ref{fig:toxic_ano} mostra que o campo não é homogêneo, mas organizado em duas linhagens. A linhagem de viés e estereótipos é mais antiga e estável, aparecendo já em 2022 e mantendo continuidade ao longo dos anos, em geral associada a modelos contrastivos como CLIP. A linhagem de jailbreak e conteúdo nocivo é mais recente e explode em 2025, acompanhando a adoção de MLLMs instrucionais e a transferência do problema de jailbreak do texto para o multimodal. Essa leitura ajuda a explicar por que o campo parece um só, mas na prática reúne comunidades com problemas e métricas distintas.
+
+\subsection{Modelos avaliados}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{fig4_models.png}
+\caption{Modelos multimodais mais avaliados no corpus núcleo (QP1).}
+\label{fig:modelos}
+\end{figure}
+
+Os modelos mais avaliados são GPT-4/4o/4V (35 estudos), LLaVA (34), Qwen-VL (29), Gemini (20) e CLIP/OpenCLIP (19). Também aparecem InternVL, MiniGPT, InstructBLIP e Claude, mas com menor frequência. O padrão revela forte concentração em um núcleo restrito de modelos, com coexistência de sistemas proprietários e open-source. Estudos de viés tendem a se apoiar em CLIP e variantes contrastivas, enquanto estudos de jailbreak se distribuem mais entre modelos instrucionais modernos.
+
+\subsection{Tipos de toxicidade}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{fig2_toxic.png}
+\caption{Tipos de toxicidade avaliados no corpus núcleo (QP2).}
+\label{fig:toxicidade}
+\end{figure}
+
+A Figura~\ref{fig:toxicidade} mostra dois blocos dominantes: viés e estereótipos, e jailbreak/conteúdo nocivo, ambos com 18 estudos. Juntos, eles representam a maior parte do corpus. Em seguida aparecem discurso de ódio e memes, segurança multidimensional, toxicidade implícita cross-modal e segurança contextual/cultural. Os temas mais raros incluem over-safety, NSFW e moderação aplicada. O recorte por memes é especialmente relevante porque evidencia um tipo de toxicidade em que o problema nasce da combinação entre modalidades, e não apenas do texto ou da imagem isoladamente.
+
+\subsection{Benchmarks e protocolos de avaliação}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{fig6_eval_pizza.png}
+\caption{Protocolos de avaliação por linhagem: viés e jailbreak (QP4).}
+\label{fig:protocolos}
+\end{figure}
+
+O corpus mostra forte fragmentação de benchmarks: 43 dos 55 estudos propõem o próprio dataset ou benchmark, e apenas 12 reutilizam recursos existentes. Isso dificulta comparação entre trabalhos e reduz a cumulatividade do campo. Nos protocolos de avaliação, observa-se uso frequente de LLMs ou APIs como juízes automáticos, seguido por avaliação humana, ASR e métricas clássicas de classificação. O cruzamento entre linhagem e protocolo deixa clara a diferença metodológica entre as duas tradições: estudos de viés priorizam métricas de disparidade e associação, enquanto estudos de jailbreak dependem de ASR e julgadores automáticos.
+
+Essa heterogeneidade pode ser vista em benchmarks e avaliações recentes como MM-SafetyBench, MMJ-Bench, REVEAL, SIUO, ELITE e FigStep, que respondem a problemas específicos e, ao mesmo tempo, reforçam a ausência de um protocolo unificado para o tema \cite{mm_safetybench2025,mmj_bench2025,reveal2025,siuo2025,elite2025,figstep2025}. Em vez de consolidar uma métrica comum, a área vem expandindo o repertório de casos e cenários de avaliação.
+
+\section{Conclusões}
+
+O mapeamento confirma que a avaliação de toxicidade em modelos multimodais de compreensão texto-imagem é um campo recente, ativo e ainda pouco consolidado. A literatura cresce rapidamente, mas se organiza em duas tradições que nem sempre conversam entre si: uma voltada a viés e estereótipos, e outra focada em jailbreak e conteúdo nocivo. Essa divisão ajuda a explicar a fragmentação de benchmarks e protocolos observada no corpus.
+
+Os resultados também mostram que o campo ainda depende muito de juízes automáticos e de benchmarks criados caso a caso. Isso limita a comparação entre estudos e reduz a capacidade de construir conhecimento cumulativo. Além disso, a presença de toxicidade implícita cross-modal, de contextos culturais não anglófonos e de interseccionalidade ainda é pequena frente ao tamanho do problema.
+
+Com base nos 55 estudos analisados, as principais lacunas são: falta de padronização de benchmarks e métricas; dependência de classificadores automáticos; toxicidade implícita cross-modal subexplorada; avaliação cultural e multilíngue insuficiente; interseccionalidade pouco tratada; e ausência de estudos no contexto brasileiro. Essas lacunas apontam para uma agenda futura de avaliação mais padronizada, contextual e sensível às particularidades multimodais do problema.
+
+Como próxima etapa, faz sentido aprofundar estudos que combinem avaliação humana, juízos automáticos e métricas específicas para danos implícitos, além de ampliar o recorte para português e para contextos culturais locais.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
-
-\newpage
-
-\section{Delineando o perfil dos alunos egressos do BCC do IFCE - Campus Aracati.}
-
-
-\subsection{Introdução}
-
-
-\newpage
-\section{Trabalho}
-
-
-
-
-
 
 \end{document}
